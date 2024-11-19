@@ -2,7 +2,7 @@ import os
 import pickle
 from collections import defaultdict
 
-def read_data(file_path, max_lines=5000):
+def read_data(file_path, max_lines=500000):
     sequence_counts = defaultdict(int)
     sequence_function_counts = defaultdict(lambda: defaultdict(int))
 

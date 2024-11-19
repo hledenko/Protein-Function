@@ -1,5 +1,6 @@
 import os
 import pickle
+import argparse
 from collections import defaultdict
 
 # 1. Load pre-calculated probabilities
@@ -39,12 +40,12 @@ def load_go_mapping(file_path):
     with open(file_path, 'r') as file:
         for line in file:
             parts = line.strip().split()
-            go_mapping[parts[0]] = parts[1]
+            go_mapping[parts[1]] = parts[0]  # Mapping function to GO term
 
     return go_mapping
 
 # 5. Main Prediction Workflow
-def main():
+def main(fasta_file):
     # Load pre-calculated probabilities from the file
     probabilities = load_probabilities()
 
@@ -57,7 +58,7 @@ def main():
         sequence_words = file.read().splitlines()
 
     # Read the input protein sequence (FASTA format)
-    input_sequence = read_fasta('../data/rcsb_pdb_8V12.fasta')
+    input_sequence = read_fasta(fasta_file)
 
     # Get function probabilities based on the input sequence
     function_probabilities = predict_function(input_sequence, sequence_words, probabilities)
@@ -69,15 +70,25 @@ def main():
     if function_probabilities:
         # Sort functions by probability in descending order and pick the highest one
         highest_function = max(function_probabilities, key=function_probabilities.get)
-        highest_probability = function_probabilities[highest_function]
+        highest_probability = round(function_probabilities[highest_function], 3)
 
         # Get the corresponding GO term
         go_term = go_mapping.get(highest_function, 'Unknown GO term')
 
         # Output the highest probability function and its corresponding GO term
-        print(f"Highest Probability Function: {highest_function}, GO Term: {go_term}, Probability: {highest_probability}")
+        print(f"Highest Probability Function: {highest_function}")
+        print(f"GO Term: {go_term}")
+        print(f"Probability: {highest_probability}")
     else:
         print("No valid functions predicted.")
 
 if __name__ == "__main__":
-    main()
+    # Set up the argument parser
+    parser = argparse.ArgumentParser(description="Predict protein function from FASTA file.")
+    parser.add_argument('fasta_file', type=str, help="Path to the input FASTA file.")
+    
+    # Parse the arguments
+    args = parser.parse_args()
+
+    # Run the main function with the provided FASTA file
+    main(args.fasta_file)
