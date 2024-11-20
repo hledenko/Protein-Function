@@ -66,21 +66,21 @@ def main(fasta_file):
     # Load GO term mappings
     go_mapping = load_go_mapping('../data/F_3_GO_table.DAT')
 
-    # Find the function with the highest probability
+    # Find the top three functions with the highest probabilities
     if function_probabilities:
-        # Sort functions by probability in descending order and pick the highest one
-        highest_function = max(function_probabilities, key=function_probabilities.get)
-        highest_probability = round(function_probabilities[highest_function], 3)
+    # Sort functions by probability in descending order
+        sorted_functions = sorted(function_probabilities.items(), key=lambda x: x[1], reverse=True)
 
-        # Get the corresponding GO term
-        go_term = go_mapping.get(highest_function, 'Unknown GO term')
+    # Get the top three functions (or fewer if there are less than three)
+        top_three = sorted_functions[:3]
 
-        # Output the highest probability function and its corresponding GO term
-        print(f"Highest Probability Function: {highest_function}")
-        print(f"GO Term: {go_term}")
-        print(f"Probability: {highest_probability}")
+        print("Top Predicted Functions:")
+        for function, probability in top_three:
+            go_term = go_mapping.get(function, 'Unknown GO term')
+            print(f"Function: {function}, GO Term: {go_term}, Probability: {round(probability, 3)}")
     else:
         print("No valid functions predicted.")
+
 
 if __name__ == "__main__":
     # Set up the argument parser
