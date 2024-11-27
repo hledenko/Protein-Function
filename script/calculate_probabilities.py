@@ -38,7 +38,6 @@ def save_probabilities(probabilities, filename="probabilities.pkl"):
         pickle.dump(probabilities, file)
 
 def main():
-    # 1. Load the first 5000 lines of the data and calculate probabilities
     sequence_counts, sequence_function_counts = read_data('../data/New_filtered_balanced_protein_language_data_34567_top2000')
     probabilities = calculate_probabilities(sequence_counts, sequence_function_counts)
 
